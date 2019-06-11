@@ -10,6 +10,9 @@ html {
         @include scrollbars(2px, #404040);
     }
 }
+body {
+    background-color: $bg-color;
+}
 * {
     touch-action: pan-y;
 }
