@@ -149,20 +149,17 @@ function addSpace(computingNumber) {
 // 替換運算符
 function replaceOperator(computingNumber) {
   const newStr = noDoubleOperator(computingNumber);
-  const _newStr = noDoubleZero(newStr).replace(/÷/g, `/`);
-  return _newStr.replace(/×/g, `*`);
+  return noDoubleZero(newStr).replace(/÷/g, `/`).replace(/×/g, `*`);
 }
 
 // 排除開頭一個0以上和0後面接數字的狀況
 function noDoubleZero(computingNumber) {
-  const newStr = computingNumber.replace(/^0[0-9]+/, `0`);
-  return newStr.replace(/([÷×+-])0\d+/g, `$10`);
+  return computingNumber.replace(/^0[0-9]+/, `0`).replace(/([÷×+-])0\d+/g, `$10`);
 }
 
 // 排除開頭為運算符及重複運算符情況
 function noDoubleOperator(computingNumber) {
-  const newStr = computingNumber.replace(/^[÷×+-]+/, ``);
-  return newStr.replace(/([÷×+-])[÷×+-]+/g, `$1`);
+  return computingNumber.replace(/^[÷×+-]+/, ``).replace(/([÷×+-])[÷×+-]+/g, `$1`);
 }
 
 // 排除異常小數點
