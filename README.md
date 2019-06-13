@@ -1,4 +1,4 @@
-## JS地下城練習 - 1F 計算機
+## JS地下城練習 - 3F 計算機
 
 [DEMO](https://dylan237.github.io/JS_3F_calculator/)  
 [Source code](https://github.com/dylan237/JS_3F_calculator/blob/master/src/js/calculator.js)  
