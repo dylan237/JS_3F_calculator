@@ -1,6 +1,6 @@
 > JS地下城練習 - F3
 
-[DEMO](https://dylan237.github.io/JS_F2_calculator/dist/)
+[DEMO](https://dylan237.github.io/JS_3F_calculator/)
 
 ## BOSS弱點
 
