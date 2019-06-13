@@ -4,8 +4,7 @@ const btn_data = ['7', '8', '9', '÷', '4', '5', '6', '×', '1', '2', '3', '+', 
 
 btn_data.forEach((item)=> {
   const btn = document.createElement('li');
-
-
+  
   const btn_borderbox = document.createElement('div');
   btn_borderbox.classList.add('btn_borderline');
   btn_borderbox.innerText = item;
@@ -19,36 +18,33 @@ btn_data.forEach((item)=> {
     btn.classList.add('largeBtn');
   } else if(/^[\d]+$/.test(item)) { // 判斷字串是否為數字
     btn_borderbox.classList.add('number');
+  } else {
+    btn_borderbox.classList.add('dot');
   }
   
   btn.appendChild(btn_borderbox);
   btn_wrap.appendChild(btn);
 })
 
-
+// 宣告變數
 let computation = document.querySelector('.header__computation');
 let result = document.querySelector('.header__result');
-let compute = false; // 判斷是否有在運算(是否有按下運算按鈕)
 let showComputingNumber = ''; // 顯示運算數字
 let showComputingResult = '0'; // 顯示運算結果
-let numberCache = ''; // 暫存待計算數字
-let waitForCount = []; // 暫存待計算數字及運算符
 
 // 綁定變數
-computation.innerText = showComputingNumber;
+computation.innerText = addSpace(showComputingNumber);
 result.innerText = showComputingResult;
 
 ///////////
 //事件監聽//
 ///////////
 
-// 為所有數字按鈕增加監聽事件
+// 數字按鈕監聽事件
 const numberBtn = document.querySelectorAll('.number');
 for(let i=0 ; i<numberBtn.length; i++) {
   numberBtn[i].addEventListener('click', function(e){
-    showComputingNumber += e.target.innerText;
-    computation.innerText = showComputingNumber;
-    numberCache += e.target.innerText; /**/
+    numberBtnFn(e);
   }, false);
 }
 // "AC"和"刪除單一數字鍵"事件監聽
@@ -62,80 +58,125 @@ for(let i=0 ; i<ACbtns.length; i++) {
     }
   }, false)
 }
+// 等於按鈕事件監聽
+const equalBtn = document.querySelector('.gradientBtn');
+equalBtn.addEventListener('click', function(){
+  calculation(showComputingNumber);
+}, false)
 // 運算符號事件監聽
 const OperatorBtns = document.querySelectorAll('.operator');
 for(let i=0 ; i<OperatorBtns.length; i++) {
   OperatorBtns[i].addEventListener('click', function(e){
-    
-    numberCache!=='' ? waitForCount.push(numberCache) : false; 
-    const ifDoubleOperator = /\d+/.test([...waitForCount].pop()); // 判斷waitForCount最後一個元素是否為運算符
-
-    if(ifDoubleOperator) {
-      console.log(numberCache);
-      waitForCount.push(e.target.innerText);
-      numberCache = '';
-      showComputingNumber += ` ${e.target.innerText} `;
-      console.log(waitForCount);
-      computation.innerText = showComputingNumber;
-    } else {
-      console.log('double Operator!');
-      return;
-    }
+    operatorFn(e);
   }, false)
 }
+// 點符號事件監聽
+const dotOperator = document.querySelector('.dot');
+dotOperator.addEventListener('click', function(e){
+  numberBtnFn(e);
+}, false)
+
 /////////////
 // methods //
 /////////////
 
-// 清空
+// 數字按鈕功能
+function numberBtnFn(e){
+  showComputingNumber += e.target.innerText;
+  showComputingNumber = afterRender(showComputingNumber);
+  computation.innerText = addSpace(toCurrency(showComputingNumber));
+}
+
+// 運算符功能
+function operatorFn(e){
+  showComputingNumber += e.target.innerText;
+  showComputingNumber = afterRender(showComputingNumber);
+  computation.innerText = addSpace(toCurrency(showComputingNumber));
+}
+
+// AC功能
 function clearAll(){
-  waitForCount = [];
   showComputingNumber = '';
   showComputingResult = '0';
-  computation.innerText = showComputingNumber;
+  computation.innerText = addSpace(toCurrency(showComputingNumber));
   result.innerText = showComputingResult;
 }
 
-// 刪除單一數字
+// ⌫功能
 function deleteSingleNumber(){
-  // if(showComputingNumber.length > 1) {
-    // showComputingNumber = showComputingNumber.split('');
-    // showComputingNumber.pop()
-    // showComputingNumber = showComputingNumber.join('');
-    numberCache!=='' ? waitForCount.push(numberCache) : false;
-    const targetNum = Object.assign([], waitForCount).pop();
-    const ifNotOperator = /\d+/.test(targetNum);
-    const ifSingleNum = /[0-9]?/.test(targetNum);
-
-    if(ifNotOperator && targetNum.length > 1) {
-      numberCache = '';
-      // 處理waitForCount陣列
-      const newtargetNum = targetNum.split('');
-      newtargetNum.pop();
-      const _targetNum = newtargetNum.join('');
-      waitForCount.pop();
-      waitForCount.push(_targetNum);
-      console.log(waitForCount);
-
-      // 處理showComputingNumber字串 (顯示給使用者看的)
-      const newShowComputingNumber = showComputingNumber.split('');
-      newShowComputingNumber.pop();
-      const _showComputingNumber = newShowComputingNumber.join('');
-      showComputingNumber = _showComputingNumber;
-      computation.innerText = showComputingNumber;
-    } else if(ifSingleNum) {
-      waitForCount.pop();
-      console.log(waitForCount);
-      console.log('只剩一位數，直接移除')
-    } else {
-      console.log('最後一個元素為運算符，無法刪除')
-      return;
-    }
-  // } else {
-  //   showComputingNumber = '';
-  // }
-  computation.innerText = showComputingNumber;
-  console.log(showComputingNumber);
+  if(!showComputingNumber) return;
+  const newShowComputingNumber = showComputingNumber.split('');
+  newShowComputingNumber.pop();
+  showComputingNumber = newShowComputingNumber.join('');
+  computation.innerText = addSpace(toCurrency(showComputingNumber));
 }
 
+// =功能
+function calculation(computingNumber) {
+  if(!computingNumber) return;
+  // 排除最後字元是運算符的情況
+  const new_computingNumber = computingNumber.split('');
+  if(/[÷×+-]/.test(new_computingNumber[new_computingNumber.length-1])) {
+    new_computingNumber.pop();
+    computingNumber = new_computingNumber.join('');
+  }
+  const resultNum = eval(replaceOperator(computingNumber));
+  const _resultNum = resultNum.toString().replace(/Infinity/, `Error`);
+  showComputingResult = _resultNum;
+  result.innerHTML = toCurrency(showComputingResult);
+  showComputingNumber = '';
+}
 
+///////////
+// 正規式 //
+///////////
+// 基本判斷
+// function basicFormat(computingNumber) {
+//   const regExp = /[0?\d+]\.?\d*[÷×+-]?[0?\d+]\.?\d*[÷×+-]?/;
+//   return regExp.test(computingNumber);
+// }
+
+// 渲染前的處理
+function afterRender(computingNumber) {
+  newStr = noDoubleOperator(computingNumber);
+  _newStr = DoubleDotRemove(newStr);
+  return noDoubleZero(_newStr);
+}
+// 運算符左右增加空白
+function addSpace(computingNumber) {
+  return computingNumber.replace(/(\d+)([÷×+-])/g, `$1 $2 `);
+}
+// 替換運算符
+function replaceOperator(computingNumber) {
+  const newStr = noDoubleOperator(computingNumber);
+  const _newStr = noDoubleZero(newStr).replace(/÷/g, `/`);
+  return _newStr.replace(/×/g, `*`);
+}
+
+// 排除開頭一個0以上和0後面接數字的狀況
+function noDoubleZero(computingNumber) {
+  const newStr = computingNumber.replace(/^0[0-9]+/, `0`);
+  return newStr.replace(/([÷×+-])0\d+/g, `$10`);
+}
+
+// 排除開頭為運算符及重複運算符情況
+function noDoubleOperator(computingNumber) {
+  const newStr = computingNumber.replace(/^[÷×+-]+/, ``);
+  return newStr.replace(/([÷×+-])[÷×+-]+/g, `$1`);
+}
+
+// 排除異常小數點
+function DoubleDotRemove(computingNumber) {
+  const newStr = computingNumber.replace(/^\.*/, ``);
+  const _newStr = newStr.replace(/\.+/g, `.`);
+  const __newStr = _newStr.replace(/\D00\.(\d+)/g, `0.$1`);
+  const ___newStr = __newStr.replace(/([÷×+-])\./g, `$1`);
+  return ___newStr.replace(/(\d+)\.+(\d+)\.*/g, `$1.$2`);
+}
+
+// 千分位
+function toCurrency(num) {
+  let newStr = num.toString().split(".");
+  newStr[0] = newStr[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return newStr.join(".");
+}

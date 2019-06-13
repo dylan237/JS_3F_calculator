@@ -1,4 +1,4 @@
-@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 60%)) {
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white, 5%)) {
     ::-webkit-scrollbar {
         width: $size;
         height: $size;

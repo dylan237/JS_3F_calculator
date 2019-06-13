@@ -12,6 +12,7 @@ html {
 }
 body {
     background-color: $bg-color;
+    @include scrollbars(4px, $primary-text-color);
 }
 * {
     touch-action: pan-y;

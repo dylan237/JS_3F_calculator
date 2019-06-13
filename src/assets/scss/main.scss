@@ -37,11 +37,15 @@
       color: $primary-text-color;
       font-size: 16px;
       height: 23px;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
     &__result {
       font-size: 56px;
       height: 70px;
       line-height: 70px;
+      overflow-x: auto;
+      overflow-y: hidden;
     }
   }
   .body {
