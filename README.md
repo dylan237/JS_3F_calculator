@@ -1,7 +1,7 @@
 > JS地下城練習 - F3
 
-[DEMO](https://dylan237.github.io/JS_3F_calculator/)
-[Source code](https://github.com/dylan237/JS_3F_calculator/blob/master/src/js/calculator.js)
+[DEMO](https://dylan237.github.io/JS_3F_calculator/)  
+[Source code](https://github.com/dylan237/JS_3F_calculator/blob/master/src/js/calculator.js)  
 
 ## 使用技術
 - HTML
